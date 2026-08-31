@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Thaê IA</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1>🌿 Thaê</h1>
+    <p>Uma IA sobre artesanato, grafismos e culturas indígenas brasileiras.</p>
+  </header>
+
+  <nav>
+    <button onclick="perguntaRapida('Quero saber sobre artesanato indígena')">
+      🧺 Artesanato
+    </button>
+
+    <button onclick="perguntaRapida('O que são grafismos indígenas?')">
+      🎨 Grafismos
+    </button>
+
+    <button onclick="perguntaRapida('Me conte sobre a cultura Baniwa')">
+      🌿 Baniwa
+    </button>
+
+    <button onclick="perguntaRapida('O que é comércio justo?')">
+      🤝 Comércio justo
+    </button>
+  </nav>
+
+  <main id="chat">
+
+    <div class="mensagem ia">
+      <strong>Thaê 🌿</strong>
+      <p>
+        Kwei! 👋<br><br>
+        Sou a Thaê. Faça uma pergunta para começarmos!
+      </p>
+    </div>
+
+  </main>
+
+  <div class="entrada">
+
+    <input
+      id="pergunta"
+      type="text"
+      placeholder="Pergunte alguma coisa..."
+      onkeydown="if(event.key === 'Enter') enviarPergunta()"
+    >
+
+    <button onclick="enviarPergunta()">➤</button>
+
+  </div>
+
+  <button class="limpar" onclick="limparChat()">
+    Limpar conversa
+  </button>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
