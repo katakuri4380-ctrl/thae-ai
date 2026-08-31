@@ -23,7 +23,7 @@ app.post("/api/chat", async (req, res) => {
     }
 
     const resposta = await client.responses.create({
-      model: "gpt-5.6-luna",
+      model: "gpt-5",
       instructions:
         "Você é a Thaê, uma assistente educativa brasileira. " +
         "Converse de forma simpática e clara sobre artesanato, grafismos " +
