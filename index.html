@@ -3,65 +3,270 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Thaê IA</title>
+  <title>Thaê - Artesanato Indígena</title>
 
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <header>
-    <h1>🌿 Thaê</h1>
-    <p>Uma IA sobre artesanato, grafismos e culturas indígenas brasileiras.</p>
-  </header>
+  <div class="app">
 
-  <nav>
-    <button onclick="perguntaRapida('Quero saber sobre artesanato indígena')">
-      🧺 Artesanato
-    </button>
+    <header class="header">
+      <div class="logo">🌿</div>
 
-    <button onclick="perguntaRapida('O que são grafismos indígenas?')">
-      🎨 Grafismos
-    </button>
+      <div>
+        <h1>Thaê</h1>
+        <p>Artesanato & Cultura Indígena</p>
+      </div>
+    </header>
 
-    <button onclick="perguntaRapida('Me conte sobre a cultura Baniwa')">
-      🌿 Baniwa
-    </button>
 
-    <button onclick="perguntaRapida('O que é comércio justo?')">
-      🤝 Comércio justo
-    </button>
-  </nav>
+    <!-- ABAS -->
 
-  <main id="chat">
+    <nav class="tabs">
 
-    <div class="mensagem ia">
-      <strong>Thaê 🌿</strong>
-      <p>
-        Kwei! 👋<br><br>
-        Sou a Thaê. Faça uma pergunta para começarmos!
-      </p>
-    </div>
+      <button class="tab active" data-page="chat">
+        💬 Chat
+      </button>
 
-  </main>
+      <button class="tab" data-page="catalogo">
+        🧺 Catálogo
+      </button>
 
-  <div class="entrada">
+      <button class="tab" data-page="cultura">
+        🌎 Cultura
+      </button>
 
-    <input
-      id="pergunta"
-      type="text"
-      placeholder="Pergunte alguma coisa..."
-      onkeydown="if(event.key === 'Enter') enviarPergunta()"
-    >
+    </nav>
 
-    <button onclick="enviarPergunta()">➤</button>
+
+    <!-- CHAT -->
+
+    <section id="chat" class="page active">
+
+      <div id="messages" class="messages">
+
+        <div class="message bot">
+
+          <div class="bubble">
+
+            <strong>Thaê 🌿</strong>
+
+            <p>Kwei! 👋</p>
+
+            <p>
+              Sou a Thaê. Posso conversar com você
+              sobre artesanato, grafismos e culturas
+              indígenas brasileiras.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PERGUNTAS RÁPIDAS -->
+
+      <div class="suggestions">
+
+        <button
+          type="button"
+          onclick="perguntaRapida('O que é artesanato indígena?')">
+          🧺 Artesanato
+        </button>
+
+        <button
+          type="button"
+          onclick="perguntaRapida('O que são grafismos indígenas?')">
+          🎨 Grafismos
+        </button>
+
+        <button
+          type="button"
+          onclick="perguntaRapida('Me fale sobre o povo Baniwa')">
+          🌿 Baniwa
+        </button>
+
+        <button
+          type="button"
+          onclick="perguntaRapida('O que é comércio justo?')">
+          🤝 Comércio justo
+        </button>
+
+      </div>
+
+
+      <!-- CAMPO DE PERGUNTA -->
+
+      <div class="input-area">
+
+        <input
+          id="entrada"
+          type="text"
+          placeholder="Digite sua pergunta..."
+          autocomplete="off"
+        >
+
+        <button
+          type="button"
+          onclick="enviarPergunta()">
+          ➤
+        </button>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="limpar"
+        onclick="limparChat()">
+        🗑️ Limpar conversa
+      </button>
+
+    </section>
+
+
+    <!-- CATÁLOGO -->
+
+    <section id="catalogo" class="page">
+
+      <div class="page-title">
+
+        <h2>🧺 Catálogo</h2>
+
+        <p>
+          Conheça diferentes formas de artesanato.
+        </p>
+
+      </div>
+
+
+      <div class="cards">
+
+        <article class="card">
+
+          <span>POVO BANIWA</span>
+
+          <h3>Cestaria</h3>
+
+          <p>
+            Cestos e objetos produzidos com fibras
+            vegetais e técnicas tradicionais.
+          </p>
+
+        </article>
+
+
+        <article class="card">
+
+          <span>ARTESANATO</span>
+
+          <h3>Cerâmica</h3>
+
+          <p>
+            Peças de cerâmica produzidas com
+            conhecimentos tradicionais.
+          </p>
+
+        </article>
+
+
+        <article class="card">
+
+          <span>ARTE</span>
+
+          <h3>Grafismos</h3>
+
+          <p>
+            Padrões visuais que podem expressar
+            identidade e conhecimentos culturais.
+          </p>
+
+        </article>
+
+
+        <article class="card">
+
+          <span>NATUREZA</span>
+
+          <h3>Fibras naturais</h3>
+
+          <p>
+            Fibras vegetais são utilizadas por
+            diferentes povos em objetos artesanais.
+          </p>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- CULTURA -->
+
+    <section id="cultura" class="page">
+
+      <div class="page-title">
+
+        <h2>🌎 Cultura</h2>
+
+        <p>
+          Conheça a diversidade dos povos indígenas.
+        </p>
+
+      </div>
+
+
+      <div class="info">
+
+        <div>
+
+          <h3>🌿 Diversidade</h3>
+
+          <p>
+            Os povos indígenas do Brasil possuem
+            diferentes línguas, histórias, conhecimentos
+            e tradições.
+          </p>
+
+        </div>
+
+
+        <div>
+
+          <h3>🎨 Grafismos</h3>
+
+          <p>
+            Os grafismos podem expressar identidade,
+            conhecimentos e histórias. Seus significados
+            variam de acordo com cada povo e contexto.
+          </p>
+
+        </div>
+
+
+        <div>
+
+          <h3>🧺 Artesanato</h3>
+
+          <p>
+            O artesanato pode transmitir conhecimentos
+            entre gerações e estar ligado à identidade
+            de cada comunidade.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
 
   </div>
 
-  <button class="limpar" onclick="limparChat()">
-    Limpar conversa
-  </button>
 
   <script src="script.js"></script>
 
