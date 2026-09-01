@@ -1,88 +1,158 @@
-const express = require("express");
-const cors = require("cors");
-const OpenAI = require("openai");
+document.addEventListener("DOMContentLoaded", function () {
 
-const app = express();
+  const entrada = document.getElementById("entrada");
+  const mensagens = document.getElementById("messages");
 
-app.use(cors());
-app.use(express.json());
-app.use(express.static("."));
+  // TROCA DE ABAS
+  const botoes = document.querySelectorAll(".tab");
+  const paginas = document.querySelectorAll(".page");
 
-const apiKey = process.env.OPENAI_API_KEY;
+  botoes.forEach(function (botao) {
 
-if (!apiKey) {
-  console.error("ERRO: OPENAI_API_KEY não foi configurada.");
-}
+    botao.addEventListener("click", function () {
 
-const client = new OpenAI({
-  apiKey: apiKey
-});
+      const destino = botao.getAttribute("data-page");
 
-app.get("/api/status", (req, res) => {
-  res.json({
-    servidor: "online",
-    chaveConfigurada: !!apiKey
+      paginas.forEach(function (pagina) {
+        pagina.classList.remove("active");
+      });
+
+      botoes.forEach(function (b) {
+        b.classList.remove("active");
+      });
+
+      const pagina = document.getElementById(destino);
+
+      if (pagina) {
+        pagina.classList.add("active");
+        botao.classList.add("active");
+      }
+
+    });
+
   });
-});
 
-app.post("/api/chat", async (req, res) => {
 
-  try {
+  // PERGUNTAS RÁPIDAS
+  window.perguntaRapida = function (texto) {
 
-    const pergunta = req.body.pergunta;
+    if (!entrada) return;
 
-    if (!pergunta) {
-      return res.status(400).json({
-        erro: "Digite uma pergunta."
-      });
+    entrada.value = texto;
+
+    enviarPergunta();
+
+  };
+
+
+  // ENVIAR PERGUNTA
+  window.enviarPergunta = async function () {
+
+    if (!entrada || !mensagens) return;
+
+    const pergunta = entrada.value.trim();
+
+    if (!pergunta) return;
+
+    adicionarMensagem(pergunta, "user");
+
+    entrada.value = "";
+    entrada.disabled = true;
+
+    const carregando = adicionarMensagem(
+      "Thaê está pensando... 🌿",
+      "bot"
+    );
+
+    try {
+
+      const resposta = await fetch(
+        "https://thae-ai.onrender.com/api/chat",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            pergunta: pergunta
+          })
+        }
+      );
+
+      const dados = await resposta.json();
+
+      carregando.remove();
+
+      if (resposta.ok && dados.resposta) {
+
+        adicionarMensagem(
+          dados.resposta,
+          "bot"
+        );
+
+      } else {
+
+        adicionarMensagem(
+          "⚠️ " + (dados.erro || "Não foi possível responder."),
+          "bot"
+        );
+
+      }
+
+    } catch (erro) {
+
+      console.error(erro);
+
+      carregando.remove();
+
+      adicionarMensagem(
+        "⚠️ Não consegui conectar ao servidor da Thaê.",
+        "bot"
+      );
+
     }
 
-    if (!apiKey) {
-      return res.status(500).json({
-        erro: "A chave da OpenAI não está configurada no Render."
-      });
-    }
+    entrada.disabled = false;
+    entrada.focus();
 
-    const resposta = await client.responses.create({
+  };
 
-      model: "gpt-5",
 
-      instructions:
-        "Você é a Thaê, uma assistente educativa brasileira. " +
-        "Responda em português de forma simpática, clara e educativa. " +
-        "Você pode explicar artesanato, grafismos e culturas indígenas brasileiras. " +
-        "Respeite a diversidade dos povos indígenas e não invente informações. " +
-        "Quando não souber algo, diga que não tem certeza.",
+  // ADICIONAR MENSAGEM
+  function adicionarMensagem(texto, tipo) {
 
-      input: pergunta
+    const mensagem = document.createElement("div");
 
-    });
+    mensagem.className = "message " + tipo;
 
-    console.log("Pergunta recebida:", pergunta);
+    const bolha = document.createElement("div");
 
-    res.json({
-      resposta: resposta.output_text
-    });
-} catch (erro) {
+    bolha.className = "bubble";
 
-  console.error("Erro na IA:", erro);
+    bolha.textContent = texto;
 
-  carregando.remove();
+    mensagem.appendChild(bolha);
 
-  adicionarMensagem(
-    "⚠️ Erro: " + erro.message,
-    "bot"
-  );
+    mensagens.appendChild(mensagem);
 
-}
-  
+    mensagens.scrollTop = mensagens.scrollHeight;
 
+    return mensagem;
   }
 
-});
 
-const PORT = process.env.PORT || 3000;
+  // LIMPAR CHAT
+  window.limparChat = function () {
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+    mensagens.innerHTML = "";
+
+    adicionarMensagem(
+      "Kwei! 👋 Sou a Thaê. Como posso ajudar você?",
+      "bot"
+    );
+
+  };
+
 });
