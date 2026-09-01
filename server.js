@@ -63,14 +63,19 @@ app.post("/api/chat", async (req, res) => {
     res.json({
       resposta: resposta.output_text
     });
+} catch (erro) {
 
-  } catch (erro) {
+  console.error("Erro na IA:", erro);
 
-    console.error("ERRO NA OPENAI:", erro);
+  carregando.remove();
 
-    res.status(500).json({
-      erro: "Erro ao conversar com a inteligência artificial."
-    });
+  adicionarMensagem(
+    "⚠️ Erro: " + erro.message,
+    "bot"
+  );
+
+}
+  
 
   }
 
