@@ -1,15 +1,7 @@
-// ==========================================
-// THAÊ — SCRIPT.JS
-// ==========================================
-
 document.addEventListener("DOMContentLoaded", function () {
 
   const entrada = document.getElementById("entrada");
   const mensagens = document.getElementById("messages");
-
-  // ========================================
-  // TROCA DE ABAS
-  // ========================================
 
   const botoes = document.querySelectorAll(".tab");
   const paginas = document.querySelectorAll(".page");
@@ -28,11 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
         b.classList.remove("active");
       });
 
-      const paginaEscolhida =
-        document.getElementById(destino);
+      const pagina = document.getElementById(destino);
 
-      if (paginaEscolhida) {
-        paginaEscolhida.classList.add("active");
+      if (pagina) {
+        pagina.classList.add("active");
         botao.classList.add("active");
       }
 
@@ -41,31 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-  // ========================================
-  // ENTER PARA ENVIAR
-  // ========================================
-
-  if (entrada) {
-
-    entrada.addEventListener("keydown", function (event) {
-
-      if (event.key === "Enter") {
-        event.preventDefault();
-        enviarPergunta();
-      }
-
-    });
-
-  }
-
-
-  // ========================================
-  // PERGUNTAS RÁPIDAS
-  // ========================================
-
   window.perguntaRapida = function (texto) {
-
-    if (!entrada) return;
 
     entrada.value = texto;
 
@@ -74,15 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
 
-  // ========================================
-  // ENVIAR PERGUNTA PARA A IA
-  // ========================================
-
   window.enviarPergunta = async function () {
-
-    if (!entrada || !mensagens) {
-      return;
-    }
 
     const pergunta = entrada.value.trim();
 
@@ -90,13 +49,11 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Mostra pergunta do usuário
     adicionarMensagem(pergunta, "user");
 
     entrada.value = "";
     entrada.disabled = true;
 
-    // Mostra carregando
     const carregando = adicionarMensagem(
       "Thaê está pensando... 🌿",
       "bot"
@@ -119,37 +76,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       );
 
-
-      if (!resposta.ok) {
-        throw new Error(
-          "Erro do servidor: " + resposta.status
-        );
-      }
-
-
       const dados = await resposta.json();
 
       carregando.remove();
 
-
-      if (dados.resposta) {
+      if (resposta.ok && dados.resposta) {
 
         adicionarMensagem(
           dados.resposta,
           "bot"
         );
 
-      } else if (dados.erro) {
-
-        adicionarMensagem(
-          "⚠️ " + dados.erro,
-          "bot"
-        );
-
       } else {
 
         adicionarMensagem(
-          "Não recebi uma resposta da IA. 🌿",
+          "⚠️ " + (
+            dados.erro ||
+            "Não foi possível obter uma resposta."
+          ),
           "bot"
         );
 
@@ -157,12 +101,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     } catch (erro) {
 
-      console.error("Erro na IA:", erro);
+      console.error(erro);
 
       carregando.remove();
 
       adicionarMensagem(
-        "⚠️ Não consegui conectar com a IA agora. Tente novamente.",
+        "⚠️ Não consegui conectar ao servidor.",
         "bot"
       );
 
@@ -174,16 +118,11 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
 
-  // ========================================
-  // ADICIONAR MENSAGEM
-  // ========================================
-
   function adicionarMensagem(texto, tipo) {
 
     const mensagem = document.createElement("div");
 
-    mensagem.className =
-      "message " + tipo;
+    mensagem.className = "message " + tipo;
 
     const bolha = document.createElement("div");
 
@@ -195,17 +134,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     mensagens.appendChild(mensagem);
 
-    mensagens.scrollTop =
-      mensagens.scrollHeight;
+    mensagens.scrollTop = mensagens.scrollHeight;
 
     return mensagem;
-
   }
 
-
-  // ========================================
-  // LIMPAR CONVERSA
-  // ========================================
 
   window.limparChat = function () {
 
