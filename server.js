@@ -1,158 +1,92 @@
-document.addEventListener("DOMContentLoaded", function () {
+const express = require("express");
+const cors = require("cors");
+const OpenAI = require("openai");
 
-  const entrada = document.getElementById("entrada");
-  const mensagens = document.getElementById("messages");
+const app = express();
 
-  // TROCA DE ABAS
-  const botoes = document.querySelectorAll(".tab");
-  const paginas = document.querySelectorAll(".page");
+app.use(cors());
+app.use(express.json());
+app.use(express.static("."));
 
-  botoes.forEach(function (botao) {
+const apiKey = process.env.OPENAI_API_KEY;
 
-    botao.addEventListener("click", function () {
+const client = new OpenAI({
+  apiKey: apiKey
+});
 
-      const destino = botao.getAttribute("data-page");
+app.get("/api/status", function (req, res) {
 
-      paginas.forEach(function (pagina) {
-        pagina.classList.remove("active");
-      });
-
-      botoes.forEach(function (b) {
-        b.classList.remove("active");
-      });
-
-      const pagina = document.getElementById(destino);
-
-      if (pagina) {
-        pagina.classList.add("active");
-        botao.classList.add("active");
-      }
-
-    });
-
+  res.json({
+    servidor: "online",
+    chaveConfigurada: !!apiKey
   });
 
-
-  // PERGUNTAS RÁPIDAS
-  window.perguntaRapida = function (texto) {
-
-    if (!entrada) return;
-
-    entrada.value = texto;
-
-    enviarPergunta();
-
-  };
+});
 
 
-  // ENVIAR PERGUNTA
-  window.enviarPergunta = async function () {
+app.post("/api/chat", async function (req, res) {
 
-    if (!entrada || !mensagens) return;
+  try {
 
-    const pergunta = entrada.value.trim();
+    const pergunta = req.body.pergunta;
 
-    if (!pergunta) return;
+    if (!pergunta) {
 
-    adicionarMensagem(pergunta, "user");
-
-    entrada.value = "";
-    entrada.disabled = true;
-
-    const carregando = adicionarMensagem(
-      "Thaê está pensando... 🌿",
-      "bot"
-    );
-
-    try {
-
-      const resposta = await fetch(
-        "https://thae-ai.onrender.com/api/chat",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            pergunta: pergunta
-          })
-        }
-      );
-
-      const dados = await resposta.json();
-
-      carregando.remove();
-
-      if (resposta.ok && dados.resposta) {
-
-        adicionarMensagem(
-          dados.resposta,
-          "bot"
-        );
-
-      } else {
-
-        adicionarMensagem(
-          "⚠️ " + (dados.erro || "Não foi possível responder."),
-          "bot"
-        );
-
-      }
-
-    } catch (erro) {
-
-      console.error(erro);
-
-      carregando.remove();
-
-      adicionarMensagem(
-        "⚠️ Não consegui conectar ao servidor da Thaê.",
-        "bot"
-      );
+      return res.status(400).json({
+        erro: "Digite uma pergunta."
+      });
 
     }
 
-    entrada.disabled = false;
-    entrada.focus();
+    if (!apiKey) {
 
-  };
+      return res.status(500).json({
+        erro: "OPENAI_API_KEY não está configurada no Render."
+      });
+
+    }
 
 
-  // ADICIONAR MENSAGEM
-  function adicionarMensagem(texto, tipo) {
+    const resposta = await client.responses.create({
 
-    const mensagem = document.createElement("div");
+      model: "gpt-5.6-luna",
 
-    mensagem.className = "message " + tipo;
+      instructions:
+        "Você é a Thaê, uma assistente educativa brasileira. " +
+        "Responda em português de forma simpática, clara e educativa. " +
+        "Você pode explicar artesanato, grafismos e culturas indígenas brasileiras. " +
+        "Respeite a diversidade dos povos indígenas. " +
+        "Não invente informações. Quando não souber algo, diga que não sabe.",
 
-    const bolha = document.createElement("div");
+      input: pergunta
 
-    bolha.className = "bubble";
+    });
 
-    bolha.textContent = texto;
 
-    mensagem.appendChild(bolha);
+    res.json({
+      resposta: resposta.output_text
+    });
 
-    mensagens.appendChild(mensagem);
 
-    mensagens.scrollTop = mensagens.scrollHeight;
+  } catch (erro) {
 
-    return mensagem;
+    console.error("ERRO NA API:", erro);
+
+    res.status(500).json({
+      erro: erro.message || "Erro ao conversar com a IA."
+    });
+
   }
 
+});
 
-  // LIMPAR CHAT
-  window.limparChat = function () {
 
-    mensagens.innerHTML = "";
+const PORT = process.env.PORT || 3000;
 
-    adicionarMensagem(
-      "Kwei! 👋 Sou a Thaê. Como posso ajudar você?",
-      "bot"
-    );
+app.listen(PORT, function () {
 
-  };
+  console.log(
+    "Servidor rodando na porta " + PORT
+  );
 
 });
