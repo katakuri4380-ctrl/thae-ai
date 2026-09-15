@@ -77,46 +77,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       );
 
-      if (!resposta.ok) {
-        throw new Error("Servidor retornou erro.");
-      }
+      const dados = await resposta.json();
 
-      // Remove "Thaê está pensando..."
       carregando.remove();
 
-      // Cria a bolha onde a resposta vai aparecer
-      const mensagem = document.createElement("div");
-      mensagem.className = "message bot";
+      if (resposta.ok && dados.resposta) {
 
-      const bolha = document.createElement("div");
-      bolha.className = "bubble";
+        adicionarMensagem(
+          dados.resposta,
+          "bot"
+        );
 
-      mensagem.appendChild(bolha);
-      mensagens.appendChild(mensagem);
+      } else {
 
-      // Lê a resposta em partes
-      const leitor = resposta.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-
-      let textoCompleto = "";
-
-      while (true) {
-
-        const { value, done } = await leitor.read();
-
-        if (done) {
-          break;
-        }
-
-        const parte = decoder.decode(value, {
-          stream: true
-        });
-
-        textoCompleto += parte;
-
-        bolha.textContent = textoCompleto;
-
-        mensagens.scrollTop = mensagens.scrollHeight;
+        adicionarMensagem(
+          "⚠️ " +
+          (dados.erro || "Não foi possível obter uma resposta."),
+          "bot"
+        );
 
       }
 
@@ -127,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
       carregando.remove();
 
       adicionarMensagem(
-        "⚠️ Não consegui responder agora. Tente novamente.",
+        "⚠️ Não consegui conectar ao servidor.",
         "bot"
       );
 
