@@ -41,23 +41,7 @@ app.post("/api/chat", async (req, res) => {
       });
     }
 
-    // Configura resposta em tempo real
-    res.setHeader(
-      "Content-Type",
-      "text/plain; charset=utf-8"
-    );
-
-    res.setHeader(
-      "Cache-Control",
-      "no-cache"
-    );
-
-    res.setHeader(
-      "Connection",
-      "keep-alive"
-    );
-
-    const resposta = await ai.models.generateContentStream({
+    const resposta = await ai.models.generateContent({
 
       model: "gemini-3.6-flash",
 
@@ -68,45 +52,30 @@ app.post("/api/chat", async (req, res) => {
         systemInstruction:
           "Você é a Thaê 🌿, uma assistente educativa brasileira especializada em artesanato, grafismos e culturas indígenas brasileiras. " +
           "Responda sempre em português, de forma natural, simpática, clara e objetiva. " +
-          "Não use frases genéricas ou exageradas. " +
+          "Comece diretamente pela resposta, sem introduções genéricas como 'que bom falar sobre isso'. " +
           "Dê informações úteis e fáceis de entender. " +
           "Respeite a diversidade dos povos indígenas brasileiros. " +
           "Nunca trate todos os povos indígenas como iguais. " +
           "Não invente nomes, significados, tradições ou informações. " +
-          "Se não tiver certeza, diga que não sabe ou que a informação precisa ser confirmada. " +
+          "Se não tiver certeza, diga claramente que não sabe. " +
           "Evite respostas desnecessariamente longas.",
 
-        maxOutputTokens: 400
+        maxOutputTokens: 350
       }
 
     });
 
-    // Envia cada parte da resposta assim que chegar
-    for await (const parte of resposta) {
-
-      if (parte.text) {
-        res.write(parte.text);
-      }
-
-    }
-
-    res.end();
+    res.json({
+      resposta: resposta.text
+    });
 
   } catch (erro) {
 
     console.error("ERRO NA GEMINI:", erro);
 
-    if (!res.headersSent) {
-
-      res.status(500).json({
-        erro: "Não consegui responder agora. Tente novamente."
-      });
-
-    } else {
-
-      res.end();
-
-    }
+    res.status(500).json({
+      erro: "Não consegui responder agora. Tente novamente."
+    });
 
   }
 
@@ -115,7 +84,5 @@ app.post("/api/chat", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(
-    "Servidor rodando na porta " + PORT
-  );
+  console.log("Servidor rodando na porta " + PORT);
 });
