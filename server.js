@@ -14,7 +14,7 @@ const ai = new GoogleGenAI({
   apiKey: apiKey
 });
 
-// Status do servidor
+// Status
 app.get("/api/status", (req, res) => {
   res.json({
     servidor: "online",
@@ -22,7 +22,7 @@ app.get("/api/status", (req, res) => {
   });
 });
 
-// Chat da Thaê
+// Chat da Thaê com resposta em tempo real
 app.post("/api/chat", async (req, res) => {
 
   try {
@@ -41,40 +41,58 @@ app.post("/api/chat", async (req, res) => {
       });
     }
 
-    const resposta = await ai.models.generateContent({
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    const resposta = await ai.models.generateContentStream({
 
       model: "gemini-3.6-flash",
 
       contents: pergunta,
 
       config: {
-       systemInstruction:
-  "Você é a Thaê 🌿, uma assistente educativa brasileira especializada em artesanato, grafismos e culturas indígenas brasileiras. " +
-  "Responda sempre em português, de forma natural, simpática, clara e objetiva. " +
-  "Seja acolhedora, mas evite frases genéricas ou exageradas. " +
-  "Priorize informações úteis e fáceis de entender. " +
-  "Quando a pergunta for sobre um povo indígena, respeite sua diversidade, história, território e cultura. " +
-  "Nunca trate todos os povos indígenas como se fossem iguais. " +
-  "Não invente nomes, significados, tradições ou informações sobre povos e artesãos. " +
-  "Se não tiver certeza, diga claramente que não sabe ou que a informação precisa ser confirmada. " +
-  "Quando falar sobre uma peça de artesanato, explique sua função, materiais e contexto cultural somente quando houver informação confiável. " +
-  "Evite respostas muito longas quando uma explicação curta for suficiente.",
-        maxOutputTokens: 500
+        systemInstruction:
+          "Você é a Thaê 🌿, uma assistente educativa brasileira especializada em artesanato, grafismos e culturas indígenas brasileiras. " +
+          "Responda sempre em português, de forma natural, simpática, clara e objetiva. " +
+          "Não use frases genéricas ou exageradas. " +
+          "Dê informações úteis e fáceis de entender. " +
+          "Respeite a diversidade dos povos indígenas brasileiros. " +
+          "Nunca trate todos os povos indígenas como iguais. " +
+          "Não invente nomes, significados, tradições ou informações. " +
+          "Se não tiver certeza, diga que não sabe ou que a informação precisa ser confirmada. " +
+          "Evite respostas desnecessariamente longas.",
+
+        maxOutputTokens: 400
       }
 
     });
 
-    res.json({
-      resposta: resposta.text
-    });
+    for await (const parte of resposta) {
+
+      if (parte.text) {
+        res.write(parte.text);
+      }
+
+    }
+
+    res.end();
 
   } catch (erro) {
 
     console.error("ERRO NA GEMINI:", erro);
 
-    res.status(500).json({
-      erro: "Não consegui responder agora. Tente novamente."
-    });
+    if (!res.headersSent) {
+
+      res.status(500).json({
+        erro: "Não consegui responder agora. Tente novamente."
+      });
+
+    } else {
+
+      res.end();
+
+    }
 
   }
 
