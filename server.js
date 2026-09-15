@@ -14,7 +14,7 @@ const ai = new GoogleGenAI({
   apiKey: apiKey
 });
 
-// Status
+// Status do servidor
 app.get("/api/status", (req, res) => {
   res.json({
     servidor: "online",
@@ -22,7 +22,7 @@ app.get("/api/status", (req, res) => {
   });
 });
 
-// Chat da Thaê com resposta em tempo real
+// Chat da Thaê
 app.post("/api/chat", async (req, res) => {
 
   try {
@@ -41,9 +41,21 @@ app.post("/api/chat", async (req, res) => {
       });
     }
 
-    res.setHeader("Content-Type", "text/plain; charset=utf-8");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
+    // Configura resposta em tempo real
+    res.setHeader(
+      "Content-Type",
+      "text/plain; charset=utf-8"
+    );
+
+    res.setHeader(
+      "Cache-Control",
+      "no-cache"
+    );
+
+    res.setHeader(
+      "Connection",
+      "keep-alive"
+    );
 
     const resposta = await ai.models.generateContentStream({
 
@@ -52,6 +64,7 @@ app.post("/api/chat", async (req, res) => {
       contents: pergunta,
 
       config: {
+
         systemInstruction:
           "Você é a Thaê 🌿, uma assistente educativa brasileira especializada em artesanato, grafismos e culturas indígenas brasileiras. " +
           "Responda sempre em português, de forma natural, simpática, clara e objetiva. " +
@@ -68,6 +81,7 @@ app.post("/api/chat", async (req, res) => {
 
     });
 
+    // Envia cada parte da resposta assim que chegar
     for await (const parte of resposta) {
 
       if (parte.text) {
@@ -101,5 +115,7 @@ app.post("/api/chat", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Servidor rodando na porta " + PORT);
+  console.log(
+    "Servidor rodando na porta " + PORT
+  );
 });
