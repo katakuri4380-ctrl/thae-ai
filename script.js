@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const botoes = document.querySelectorAll(".tab");
   const paginas = document.querySelectorAll(".page");
 
+  // Troca de páginas
   botoes.forEach(function (botao) {
 
     botao.addEventListener("click", function () {
@@ -31,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   });
 
-
+  // Perguntas rápidas
   window.perguntaRapida = function (texto) {
 
     entrada.value = texto;
@@ -40,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   };
 
-
+  // Enviar pergunta
   window.enviarPergunta = async function () {
 
     const pergunta = entrada.value.trim();
@@ -76,37 +77,57 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       );
 
-      const dados = await resposta.json();
+      if (!resposta.ok) {
+        throw new Error("Servidor retornou erro.");
+      }
 
+      // Remove "Thaê está pensando..."
       carregando.remove();
 
-      if (resposta.ok && dados.resposta) {
+      // Cria a bolha onde a resposta vai aparecer
+      const mensagem = document.createElement("div");
+      mensagem.className = "message bot";
 
-        adicionarMensagem(
-          dados.resposta,
-          "bot"
-        );
+      const bolha = document.createElement("div");
+      bolha.className = "bubble";
 
-      } else {
+      mensagem.appendChild(bolha);
+      mensagens.appendChild(mensagem);
 
-        adicionarMensagem(
-          "⚠️ " + (
-            dados.erro ||
-            "Não foi possível obter uma resposta."
-          ),
-          "bot"
-        );
+      // Lê a resposta em partes
+      const leitor = resposta.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+
+      let textoCompleto = "";
+
+      while (true) {
+
+        const { value, done } = await leitor.read();
+
+        if (done) {
+          break;
+        }
+
+        const parte = decoder.decode(value, {
+          stream: true
+        });
+
+        textoCompleto += parte;
+
+        bolha.textContent = textoCompleto;
+
+        mensagens.scrollTop = mensagens.scrollHeight;
 
       }
 
     } catch (erro) {
 
-      console.error(erro);
+      console.error("ERRO:", erro);
 
       carregando.remove();
 
       adicionarMensagem(
-        "⚠️ Não consegui conectar ao servidor.",
+        "⚠️ Não consegui responder agora. Tente novamente.",
         "bot"
       );
 
@@ -117,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   };
 
-
+  // Criar mensagem
   function adicionarMensagem(texto, tipo) {
 
     const mensagem = document.createElement("div");
@@ -137,9 +158,10 @@ document.addEventListener("DOMContentLoaded", function () {
     mensagens.scrollTop = mensagens.scrollHeight;
 
     return mensagem;
+
   }
 
-
+  // Limpar conversa
   window.limparChat = function () {
 
     mensagens.innerHTML = "";
