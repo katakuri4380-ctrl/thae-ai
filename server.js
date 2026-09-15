@@ -14,18 +14,20 @@ const ai = new GoogleGenAI({
   apiKey: apiKey
 });
 
-app.get("/api/status", function (req, res) {
+// Status do servidor
+app.get("/api/status", (req, res) => {
   res.json({
     servidor: "online",
     chaveConfigurada: !!apiKey
   });
 });
 
-app.post("/api/chat", async function (req, res) {
+// Chat da Thaê
+app.post("/api/chat", async (req, res) => {
 
   try {
 
-    const pergunta = req.body.pergunta;
+    const pergunta = req.body.pergunta?.trim();
 
     if (!pergunta) {
       return res.status(400).json({
@@ -35,21 +37,27 @@ app.post("/api/chat", async function (req, res) {
 
     if (!apiKey) {
       return res.status(500).json({
-        erro: "GEMINI_API_KEY não está configurada no Render."
+        erro: "GEMINI_API_KEY não está configurada."
       });
     }
 
     const resposta = await ai.models.generateContent({
+
       model: "gemini-3.6-flash",
+
       contents: pergunta,
+
       config: {
         systemInstruction:
           "Você é a Thaê, uma assistente educativa brasileira. " +
-          "Responda em português de forma simpática, clara e educativa. " +
-          "Você pode explicar artesanato, grafismos e culturas indígenas brasileiras. " +
+          "Responda em português, de forma simpática, clara e objetiva. " +
+          "Fale sobre artesanato, grafismos e culturas indígenas brasileiras. " +
           "Respeite a diversidade dos povos indígenas. " +
-          "Não invente informações. Quando não souber algo, diga que não sabe."
+          "Não invente informações. Se não souber, diga que não sabe.",
+
+        maxOutputTokens: 500
       }
+
     });
 
     res.json({
@@ -61,7 +69,7 @@ app.post("/api/chat", async function (req, res) {
     console.error("ERRO NA GEMINI:", erro);
 
     res.status(500).json({
-      erro: erro.message || "Erro ao conversar com a IA."
+      erro: "Não consegui responder agora. Tente novamente."
     });
 
   }
@@ -70,6 +78,6 @@ app.post("/api/chat", async function (req, res) {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, function () {
+app.listen(PORT, () => {
   console.log("Servidor rodando na porta " + PORT);
 });
