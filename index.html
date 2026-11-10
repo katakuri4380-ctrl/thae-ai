@@ -1,193 +1,229 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thaê IA</title>
-
+  <meta name="theme-color" content="#173d2d">
+  <meta name="description" content="Thaê: plataforma de valorização da arte, cultura e empreendedorismo indígena brasileiro.">
+  <title>Thaê | Arte, Cultura e Ancestralidade</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+<div class="app">
 
-  <div class="app">
+  <header class="header">
+    <div class="logo">🌿</div>
+    <div>
+      <h1>Thaê</h1>
+      <p>Arte, cultura e ancestralidade</p>
+    </div>
+  </header>
 
-    <header class="header">
-      <div class="logo">🌿</div>
+  <nav class="tabs">
+    <button class="tab active" data-page="inicio">Início</button>
+    <button class="tab" data-page="chat">Thaê IA</button>
+    <button class="tab" data-page="catalogo">Artesanato</button>
+    <button class="tab" data-page="cultura">Culturas</button>
+    <button class="tab" data-page="artesaos">Artesãos</button>
+  </nav>
 
-      <div>
-        <h1>Thaê</h1>
-        <p>Artesanato & Cultura Indígena</p>
-      </div>
-    </header>
+  <main>
 
-    <nav class="tabs">
-      <button class="tab active" data-page="chat">💬 Chat</button>
-      <button class="tab" data-page="catalogo">🧺 Catálogo</button>
-      <button class="tab" data-page="cultura">🌎 Cultura</button>
-    </nav>
-
-    <section id="chat" class="page active">
-
-      <div id="messages" class="messages">
-
-        <div class="message bot">
-          <div class="bubble">
-            <strong>Thaê 🌿</strong>
-
-            <p>Kwei! 👋</p>
-
-            <p>
-              Sou a Thaê. Posso conversar com você
-              sobre artesanato, grafismos e culturas
-              indígenas brasileiras.
-            </p>
-          </div>
-        </div>
-
+    <section id="inicio" class="page active">
+      <div class="hero">
+        <span>🌎 CULTURA • CONHECIMENTO • CONEXÃO</span>
+        <h2>Conhecimento que atravessa gerações.</h2>
+        <p>
+          Uma plataforma dedicada à valorização dos povos
+          indígenas, suas culturas, artes e conhecimentos.
+        </p>
+        <button onclick="abrirPagina('chat')">
+          Conheça a Thaê IA →
+        </button>
       </div>
 
-      <div class="suggestions">
-
-        <button type="button"
-          onclick="perguntaRapida('O que é artesanato indígena?')">
-          🧺 Artesanato
-        </button>
-
-        <button type="button"
-          onclick="perguntaRapida('O que são grafismos indígenas?')">
-          🎨 Grafismos
-        </button>
-
-        <button type="button"
-          onclick="perguntaRapida('Me fale sobre o povo Baniwa')">
-          🌿 Baniwa
-        </button>
-
-        <button type="button"
-          onclick="perguntaRapida('O que é comércio justo?')">
-          🤝 Comércio justo
-        </button>
-
-      </div>
-
-      <div class="input-area">
-
-        <input
-          id="entrada"
-          type="text"
-          placeholder="Digite sua pergunta..."
-          autocomplete="off"
-        >
-
-        <button type="button" onclick="enviarPergunta()">
-          ➤
-        </button>
-
-      </div>
-
-      <button
-        type="button"
-        class="limpar"
-        onclick="limparChat()">
-        🗑️ Limpar conversa
-      </button>
-
-    </section>
-
-    <section id="catalogo" class="page">
-
-      <div class="page-title">
-        <h2>🧺 Catálogo</h2>
-        <p>Conheça diferentes formas de artesanato.</p>
+      <div class="section-heading">
+        <h2>Explore a plataforma</h2>
+        <p>Descubra tudo o que a Thaê oferece.</p>
       </div>
 
       <div class="cards">
-
         <article class="card">
-          <span>POVO BANIWA</span>
-          <h3>Cestaria</h3>
-          <p>
-            Cestos e objetos produzidos com fibras
-            vegetais e técnicas tradicionais.
-          </p>
+          <span>🤖 INTELIGÊNCIA ARTIFICIAL</span>
+          <h3>Converse com a Thaê</h3>
+          <p>Aprenda sobre artesanato, grafismos e culturas indígenas.</p>
+          <button onclick="abrirPagina('chat')">Explorar →</button>
         </article>
 
         <article class="card">
-          <span>ARTESANATO</span>
-          <h3>Cerâmica</h3>
-          <p>
-            Peças de cerâmica produzidas com
-            conhecimentos tradicionais.
-          </p>
+          <span>🧺 ARTESANATO</span>
+          <h3>Conheça as artes</h3>
+          <p>Descubra técnicas, materiais e trabalhos artesanais.</p>
+          <button onclick="abrirPagina('catalogo')">Explorar →</button>
         </article>
 
         <article class="card">
-          <span>ARTE</span>
-          <h3>Grafismos</h3>
-          <p>
-            Padrões visuais que podem expressar
-            identidade e conhecimentos culturais.
-          </p>
+          <span>🌎 CONHECIMENTO</span>
+          <h3>Diversidade cultural</h3>
+          <p>Conheça a diversidade dos povos indígenas brasileiros.</p>
+          <button onclick="abrirPagina('cultura')">Explorar →</button>
         </article>
 
         <article class="card">
-          <span>NATUREZA</span>
-          <h3>Fibras naturais</h3>
-          <p>
-            Fibras vegetais são utilizadas por
-            diferentes povos em objetos artesanais.
-          </p>
+          <span>🤝 EMPREENDEDORISMO</span>
+          <h3>Área dos artesãos</h3>
+          <p>Um espaço pensado para dar visibilidade aos criadores.</p>
+          <button onclick="abrirPagina('artesaos')">Explorar →</button>
         </article>
+      </div>
+    </section>
 
+    <section id="chat" class="page">
+      <div class="page-title">
+        <h2>🌿 Thaê IA</h2>
+        <p>Uma assistente educativa sobre culturas indígenas.</p>
       </div>
 
+      <div id="messages" class="messages">
+        <div class="message bot">
+          <div class="bubble">
+            <strong>Thaê 🌿</strong>
+            <p>Kwei! 👋</p>
+            <p>
+              Sou a Thaê. Vamos aprender juntos sobre
+              artesanato, grafismos e culturas indígenas?
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="suggestions">
+        <button onclick="perguntaRapida('O que é artesanato indígena?')">🧺 Artesanato</button>
+        <button onclick="perguntaRapida('O que são grafismos indígenas?')">🎨 Grafismos</button>
+        <button onclick="perguntaRapida('Me fale sobre o povo Baniwa')">🌿 Baniwa</button>
+        <button onclick="perguntaRapida('O que é comércio justo?')">🤝 Comércio justo</button>
+      </div>
+
+      <div class="input-area">
+        <input id="entrada" type="text"
+          placeholder="Pergunte alguma coisa..."
+          autocomplete="off">
+        <button onclick="enviarPergunta()">➤</button>
+      </div>
+
+      <button class="limpar" onclick="limparChat()">🗑️ Limpar conversa</button>
+    </section>
+
+    <section id="catalogo" class="page">
+      <div class="page-title">
+        <h2>🧺 Artesanato</h2>
+        <p>Conheça diferentes expressões do trabalho artesanal.</p>
+      </div>
+
+      <div class="cards">
+        <article class="card">
+          <span>CESTARIA</span>
+          <h3>Arte com fibras</h3>
+          <p>Conheça técnicas de trançado e produção de cestos.</p>
+        </article>
+
+        <article class="card">
+          <span>CERÂMICA</span>
+          <h3>Arte em argila</h3>
+          <p>Conheça diferentes tradições de produção cerâmica.</p>
+        </article>
+
+        <article class="card">
+          <span>GRAFISMOS</span>
+          <h3>Expressões visuais</h3>
+          <p>Conheça padrões e seus significados em cada contexto cultural.</p>
+        </article>
+
+        <article class="card">
+          <span>FIBRAS NATURAIS</span>
+          <h3>Conhecimentos tradicionais</h3>
+          <p>Descubra o uso de materiais naturais no artesanato.</p>
+        </article>
+      </div>
+
+      <p class="notice">
+        Este catálogo é demonstrativo. Produtos e vendas serão
+        adicionados com autorização dos respectivos artesãos.
+      </p>
     </section>
 
     <section id="cultura" class="page">
-
       <div class="page-title">
-        <h2>🌎 Cultura</h2>
-        <p>Conheça a diversidade dos povos indígenas.</p>
+        <h2>🌎 Culturas indígenas</h2>
+        <p>Conhecimento, diversidade e respeito.</p>
       </div>
 
       <div class="info">
-
         <div>
-          <h3>🌿 Diversidade</h3>
-          <p>
-            Os povos indígenas do Brasil possuem
-            diferentes línguas, histórias, conhecimentos
-            e tradições.
-          </p>
+          <h3>🌿 Diversidade dos povos</h3>
+          <p>O Brasil possui uma grande diversidade de povos indígenas, línguas e organizações sociais.</p>
         </div>
 
         <div>
           <h3>🎨 Grafismos</h3>
-          <p>
-            Os grafismos podem expressar identidade,
-            conhecimentos e histórias. Seus significados
-            variam de acordo com cada povo e contexto.
-          </p>
+          <p>As expressões gráficas possuem significados que variam conforme os povos e seus contextos.</p>
         </div>
 
         <div>
           <h3>🧺 Artesanato</h3>
+          <p>O artesanato reúne técnicas, conhecimentos e práticas transmitidas entre gerações.</p>
+        </div>
+
+        <div>
+          <h3>📚 Educação e memória</h3>
+          <p>Valorizar os conhecimentos indígenas também significa reconhecer seus protagonistas e suas histórias.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="artesaos" class="page">
+      <div class="page-title">
+        <h2>🤝 Área dos artesãos</h2>
+        <p>Protagonismo indígena e valorização do trabalho artesanal.</p>
+      </div>
+
+      <div class="info">
+        <div>
+          <h3>🌿 Seu trabalho merece visibilidade</h3>
           <p>
-            O artesanato pode transmitir conhecimentos
-            entre gerações e estar ligado à identidade
-            de cada comunidade.
+            A Thaê pretende criar um espaço para que artesãos
+            possam apresentar suas histórias e trabalhos.
           </p>
         </div>
 
-      </div>
+        <div>
+          <h3>🧺 Catálogo de criadores</h3>
+          <p>
+            Futuramente, será possível apresentar peças,
+            técnicas, materiais e informações sobre os criadores.
+          </p>
+        </div>
 
+        <div>
+          <h3>🤝 Comércio justo</h3>
+          <p>
+            Queremos desenvolver um modelo que valorize
+            o trabalho dos artesãos e respeite sua autonomia.
+          </p>
+        </div>
+      </div>
     </section>
 
-  </div>
+  </main>
 
-  <script src="script.js"></script>
+  <footer>
+    <p>🌿 Thaê — Tecnologia, cultura e valorização indígena.</p>
+  </footer>
 
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
