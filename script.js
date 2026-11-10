@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
 
   const entrada = document.getElementById("entrada");
@@ -6,34 +7,52 @@ document.addEventListener("DOMContentLoaded", function () {
   const botoes = document.querySelectorAll(".tab");
   const paginas = document.querySelectorAll(".page");
 
-  // Troca de páginas
+  let historico = [];
+  let enviando = false;
+
+  // NAVEGAÇÃO ENTRE PÁGINAS
+
+  window.abrirPagina = function (destino) {
+
+    paginas.forEach(function (pagina) {
+      pagina.classList.remove("active");
+    });
+
+    botoes.forEach(function (botao) {
+      botao.classList.remove("active");
+    });
+
+    const pagina = document.getElementById(destino);
+
+    if (pagina) {
+      pagina.classList.add("active");
+    }
+
+    const botaoAtivo = document.querySelector(
+      '.tab[data-page="' + destino + '"]'
+    );
+
+    if (botaoAtivo) {
+      botaoAtivo.classList.add("active");
+    }
+
+  };
+
   botoes.forEach(function (botao) {
 
     botao.addEventListener("click", function () {
 
-      const destino = botao.getAttribute("data-page");
-
-      paginas.forEach(function (pagina) {
-        pagina.classList.remove("active");
-      });
-
-      botoes.forEach(function (b) {
-        b.classList.remove("active");
-      });
-
-      const pagina = document.getElementById(destino);
-
-      if (pagina) {
-        pagina.classList.add("active");
-        botao.classList.add("active");
-      }
+      abrirPagina(botao.dataset.page);
 
     });
 
   });
 
-  // Perguntas rápidas
+  // PERGUNTAS RÁPIDAS
+
   window.perguntaRapida = function (texto) {
+
+    abrirPagina("chat");
 
     entrada.value = texto;
 
@@ -41,14 +60,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   };
 
-  // Enviar pergunta
+  // ENVIAR PERGUNTA
+
   window.enviarPergunta = async function () {
 
     const pergunta = entrada.value.trim();
 
-    if (!pergunta) {
+    if (!pergunta || enviando) {
       return;
     }
+
+    enviando = true;
 
     adicionarMensagem(pergunta, "user");
 
@@ -72,7 +94,11 @@ document.addEventListener("DOMContentLoaded", function () {
           },
 
           body: JSON.stringify({
-            pergunta: pergunta
+
+            pergunta: pergunta,
+
+            historico: historico.slice(-12)
+
           })
         }
       );
@@ -81,42 +107,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
       carregando.remove();
 
-      if (resposta.ok && dados.resposta) {
+      if (!resposta.ok || !dados.resposta) {
 
-        adicionarMensagem(
-          dados.resposta,
-          "bot"
-        );
-
-      } else {
-
-        adicionarMensagem(
-          "⚠️ " +
-          (dados.erro || "Não foi possível obter uma resposta."),
-          "bot"
+        throw new Error(
+          dados.erro || "Não foi possível obter uma resposta."
         );
 
       }
 
+      adicionarMensagem(dados.resposta, "bot");
+
+      // GUARDAR HISTÓRICO DA CONVERSA
+
+      historico.push(
+        {
+          role: "user",
+          text: pergunta
+        },
+        {
+          role: "model",
+          text: dados.resposta
+        }
+      );
+
+      // Manter somente as 12 mensagens mais recentes.
+
+      historico = historico.slice(-12);
+
     } catch (erro) {
 
-      console.error("ERRO:", erro);
+      console.error("ERRO NA THAÊ:", erro);
 
       carregando.remove();
 
       adicionarMensagem(
-        "⚠️ Não consegui conectar ao servidor.",
+        "⚠️ " + erro.message,
         "bot"
       );
 
-    }
+    } finally {
 
-    entrada.disabled = false;
-    entrada.focus();
+      enviando = false;
+      entrada.disabled = false;
+      entrada.focus();
+
+    }
 
   };
 
-  // Criar mensagem
+  // CRIAR MENSAGEM
+
   function adicionarMensagem(texto, tipo) {
 
     const mensagem = document.createElement("div");
@@ -139,16 +179,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
   }
 
-  // Limpar conversa
+  // LIMPAR CONVERSA
+
   window.limparChat = function () {
+
+    if (enviando) {
+      return;
+    }
+
+    historico = [];
 
     mensagens.innerHTML = "";
 
     adicionarMensagem(
-      "Kwei! 👋 Sou a Thaê. Como posso ajudar você?",
+      "Kwei! 👋 Sou a Thaê. Como posso ajudar você? 🌿",
       "bot"
     );
 
   };
+
+  // ENVIAR COM ENTER
+
+  entrada.addEventListener("keydown", function (evento) {
+
+    if (evento.key === "Enter") {
+
+      evento.preventDefault();
+
+      enviarPergunta();
+
+    }
+
+  });
 
 });
